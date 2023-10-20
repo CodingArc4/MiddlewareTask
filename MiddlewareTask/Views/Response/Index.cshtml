@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Binding Example</title>
+</head>
+<body>
+    <div id="dataContainer">
+        <p>Name: <span id="name"></span></p>
+        <p>Designation: <span id="designation"></span></p>
+        <p>Company: <span id="company"></span></p>
+    </div>
+</body>
+</html>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            // Fetch data from GetPerson1 action
+            $.ajax({
+                url: '/Response/GetPerson',
+                method: 'GET',
+                success: function (data) {
+                    $('#name').text(data.name);
+                    $('#designation').text(data.designation);
+                    $('#company').text(data.company);
+                }
+            });
+        }); 
+    </script>
+}
