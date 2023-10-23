@@ -19,15 +19,13 @@ namespace MiddlewareTask.Middleware
             context.Response.Headers.Add("Action-Name", context.Request.RouteValues["action"]?.ToString());
             context.Response.Headers.Add("HTTP-Method", context.Request.Method);
             context.Response.Headers.Add("HTTP-Scheme", context.Request.Scheme);
-            context.Response.Headers.Add("Host", context.Request.Host.ToString());
+            context.Response.Headers.Add("Host", context.Request.Host.Host);
             context.Response.Headers.Add("Port", context.Request.Host.Port.ToString());
-            context.Response.Headers.Add("Time-Taken", sw.ElapsedMilliseconds + "ms");
+            context.Response.Headers.Add("Time-Taken", sw.ElapsedMilliseconds.ToString() + "ms");
             context.Response.Headers.Add("Server-Date-Time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
-
+            await _next(context);
             sw.Stop();
-
-            await _next(context);        
         }
     }
 }

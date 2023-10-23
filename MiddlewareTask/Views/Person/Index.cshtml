@@ -1,0 +1,85 @@
+﻿@model MiddlewareTask.Models.Person
+
+<h2>Person List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Designation</th>
+            <th>Company</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="personList">
+        <!-- This will be populated with data via AJAX -->
+    </tbody>
+</table>
+
+<h2>Add Person</h2>
+<form id="addPersonForm">
+    <div class="form-group">
+        <label for="Name">Name:</label>
+        <input type="text" class="form-control" id="Name" name="Name" required>
+    </div>
+    <div class="form-group">
+        <label for="Designation">Designation:</label>
+        <input type="text" class="form-control" id="Designation" name="Designation" required>
+    </div>
+    <div class="form-group">
+        <label for="Company">Company:</label>
+        <input type="text" class="form-control" id="Company" name="Company" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to load the person list
+            function loadPersonList() {
+                $.get("/api/PersonApi", function (data) {
+                    var tableBody = $("#personList");
+                    tableBody.empty();
+                    data.forEach(function (person) {
+                        tableBody.append(`<tr>
+                                    <td>${person.name}</td>
+                                    <td>${person.designation}</td>
+                                    <td>${person.company}</td>
+                                    <td>
+                                        <button class="btn btn-info" onclick="editPerson(${person.id})">Edit</button>
+                                        <button class="btn btn-danger" onclick="deletePerson(${person.id})">Delete</button>
+                                    </td>
+                                </tr>`);
+                    });
+                });
+            }
+
+            // Load the person list on page load
+            loadPersonList();
+
+            // Function to add a person via AJAX
+            $("#addPersonForm").submit(function (event) {
+                event.preventDefault();
+                var person = {
+                    Name: $("#Name").val(),
+                    Designation: $("#Designation").val(),
+                    Company: $("#Company").val()
+                };
+
+                $.ajax({
+                    url: "/api/PersonApi",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(person), 
+                    success: function (data) {
+                        loadPersonList();
+                        $("#Name").val("");
+                        $("#Designation").val("");
+                        $("#Company").val("");
+                    }
+                });
+            });
+        });
+    </script>
+}
