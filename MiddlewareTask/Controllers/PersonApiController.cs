@@ -17,7 +17,7 @@ namespace MiddlewareTask.Controllers
         }
 
         // GET: api/PersonApi
-        [HttpGet]
+        [HttpGet("GetPerson")]
         public async Task<IActionResult> Get()
         {
             var people = await _context.Persons.ToListAsync();
@@ -25,7 +25,7 @@ namespace MiddlewareTask.Controllers
         }
 
         // POST: api/PersonApi
-        [HttpPost]
+        [HttpPost("AddPerson")]
         public async Task<IActionResult> Post([FromBody] Person person)
         {
             _context.Persons.Add(person);
@@ -34,7 +34,7 @@ namespace MiddlewareTask.Controllers
         }
 
         // PUT: api/PersonApi/5
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Person person)
         {
             if (id != person.Id)
@@ -64,7 +64,7 @@ namespace MiddlewareTask.Controllers
         }
 
         // DELETE: api/PersonApi/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var person = await _context.Persons.FindAsync(id);

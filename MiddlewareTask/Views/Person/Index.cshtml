@@ -2,7 +2,7 @@
 
 <h2>Person List</h2>
 
-<table class="table">
+<table class="table" id="persontable">
     <thead>
         <tr>
             <th>Name</th>
@@ -36,28 +36,37 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            
             // Function to load the person list
+            var table = $("#persontable").DataTable({
+                ajax: {
+                    url: "/api/PersonApi/GetPerson",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                     
+                    },
+                    {
+                        data: "designation"
+                    },
+                    {
+                        data: "company"
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link btn-danger js-delete' data-customer-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
+
             function loadPersonList() {
-                $.get("/api/PersonApi", function (data) {
-                    var tableBody = $("#personList");
-                    tableBody.empty();
-                    data.forEach(function (person) {
-                        tableBody.append(`<tr>
-                                    <td>${person.name}</td>
-                                    <td>${person.designation}</td>
-                                    <td>${person.company}</td>
-                                    <td>
-                                        <button class="btn btn-info" onclick="editPerson(${person.id})">Edit</button>
-                                        <button class="btn btn-danger" onclick="deletePerson(${person.id})">Delete</button>
-                                    </td>
-                                </tr>`);
-                    });
-                });
+                table.ajax.reload();
             }
-
-            // Load the person list on page load
-            loadPersonList();
-
+            
             // Function to add a person via AJAX
             $("#addPersonForm").submit(function (event) {
                 event.preventDefault();
@@ -68,7 +77,7 @@
                 };
 
                 $.ajax({
-                    url: "/api/PersonApi",
+                    url: "/api/PersonApi/AddPerson",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(person), 
@@ -77,6 +86,22 @@
                         $("#Name").val("");
                         $("#Designation").val("");
                         $("#Company").val("");
+                    }
+                });
+            });
+
+            // Function to delete a person
+            $("#persontable").on("click", ".js-delete", function () {
+                var button = $(this);
+                bootbox.confirm("Are you sure,you want to delete this customer?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/PersonApi/delete/" + button.attr("data-customer-id"),
+                            method: "DELETE",
+                            success: function () {
+                                button.parents("tr").remove();
+                            }
+                        });
                     }
                 });
             });
