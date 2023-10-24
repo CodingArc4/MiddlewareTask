@@ -44,7 +44,7 @@ namespace MiddlewareTask.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete( int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var person = await _context.Persons.FindAsync(id);
             if (person == null)
