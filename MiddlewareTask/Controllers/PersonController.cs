@@ -15,5 +15,10 @@ namespace MiddlewareTask.Controllers
         {
             return View();
         }
+
+        public IActionResult FromForm()
+        {
+            return View();
+        }
     }
 }

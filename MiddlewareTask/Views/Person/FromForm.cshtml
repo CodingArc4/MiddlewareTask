@@ -40,7 +40,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            
+
             // Function to load the person list
             var table = $("#persontable").DataTable({
                 ajax: {
@@ -50,7 +50,7 @@
                 columns: [
                     {
                         data: "name",
-                     
+
                     },
                     {
                         data: "designation"
@@ -61,7 +61,7 @@
                     {
                         data: "id",
                         render: function (data) {
-                            return "<button class='btn-link btn-danger js-delete' data-customer-id=" + data + ">Delete</button>";
+                            return "<button class='btn-link btn-danger js-delete' data-person-id=" + data + ">Delete</button>";
                         }
                     }
                 ]
@@ -70,21 +70,23 @@
             function loadPersonList() {
                 table.ajax.reload();
             }
-            
+
             // Function to add a person via AJAX
             $("#addPersonForm").submit(function (event) {
                 event.preventDefault();
-                var person = {
-                    Name: $("#Name").val(),
-                    Designation: $("#Designation").val(),
-                    Company: $("#Company").val()
-                };
+
+                var formData = new FormData(); 
+
+                formData.append("Name", $("#Name").val());
+                formData.append("Designation", $("#Designation").val());
+                formData.append("Company", $("#Company").val());
 
                 $.ajax({
-                    url: "/api/PersonApi/AddPerson",
+                    url: "/api/PersonApi/AddPersonByForm",
                     type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(person), 
+                    data: formData, 
+                    processData: false,
+                    contentType: false, 
                     success: function (data) {
                         loadPersonList();
                         $("#Name").val("");
@@ -94,13 +96,14 @@
                 });
             });
 
+
             // Function to delete a person
             $("#persontable").on("click", ".js-delete", function () {
                 var button = $(this);
                 bootbox.confirm("Are you sure,you want to delete this customer?", function (result) {
                     if (result) {
                         $.ajax({
-                            url: "/api/PersonApi/delete/" + button.attr("data-customer-id"),
+                            url: "/api/PersonApi/DeleteUser?id=" + button.attr("data-person-id"),
                             method: "DELETE",
                             success: function () {
                                 button.parents("tr").remove();

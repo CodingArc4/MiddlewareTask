@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MiddlewareTask.Filter;
 using MiddlewareTask.Middleware;
 using MiddlewareTask.Models;
 
@@ -11,7 +12,9 @@ namespace MiddlewareTask
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>  {
+                options.Filters.Add<ResponseFilter>();
+            });
 
             //For database connection
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -30,7 +33,7 @@ namespace MiddlewareTask
                 app.UseHsts();
             }
 
-            app.UseMiddleware<ResponseMiddleware>();
+            //app.UseMiddleware<ResponseMiddleware>();
 
             app.UseHttpsRedirection();
 

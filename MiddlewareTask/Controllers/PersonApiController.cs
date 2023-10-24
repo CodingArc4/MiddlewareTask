@@ -16,15 +16,16 @@ namespace MiddlewareTask.Controllers
             _context = context;
         }
 
-        // GET: api/PersonApi
+
         [HttpGet("GetPerson")]
         public async Task<IActionResult> Get()
         {
             var people = await _context.Persons.ToListAsync();
+            //Task.Delay(10000).Wait();
             return Ok(people);
         }
 
-        // POST: api/PersonApi
+   
         [HttpPost("AddPerson")]
         public async Task<IActionResult> Post([FromBody] Person person)
         {
@@ -33,39 +34,17 @@ namespace MiddlewareTask.Controllers
             return Ok(person);
         }
 
-        // PUT: api/PersonApi/5
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Person person)
+
+        [HttpPost("AddPersonByForm")]
+        public async Task<IActionResult> PostByFrom([FromForm] Person person)
         {
-            if (id != person.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(person).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Persons.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            _context.Persons.Add(person);
+            await _context.SaveChangesAsync();
+            return Ok(person);
         }
 
-        // DELETE: api/PersonApi/5
         [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete( int id)
         {
             var person = await _context.Persons.FindAsync(id);
             if (person == null)
@@ -75,6 +54,20 @@ namespace MiddlewareTask.Controllers
 
             _context.Persons.Remove(person);
             await _context.SaveChangesAsync();
+            return Ok(person);
+        }
+
+        [HttpDelete("DeleteUser")]
+        public IActionResult DeleteUser([FromQuery] int id)
+        {
+            var person =  _context.Persons.Find(id);
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            _context.Persons.Remove(person);
+            _context.SaveChangesAsync();
             return Ok(person);
         }
     }
